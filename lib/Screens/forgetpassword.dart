@@ -1,4 +1,5 @@
 import 'package:ca202/Screens/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Forget_Password_Screen extends StatefulWidget {
@@ -9,6 +10,7 @@ class Forget_Password_Screen extends StatefulWidget {
 }
 
 class _Forget_Password_ScreenState extends State<Forget_Password_Screen> {
+  TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +90,7 @@ class _Forget_Password_ScreenState extends State<Forget_Password_Screen> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Enter your email",
@@ -108,7 +111,16 @@ class _Forget_Password_ScreenState extends State<Forget_Password_Screen> {
                         borderRadius: BorderRadius.circular(
                           10.0,
                         ),
-                        onTap: () {
+                        onTap: () async {
+                          await FirebaseAuth.instance.sendPasswordResetEmail(
+                              email: _emailController.text);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Send in email",
+                              ),
+                            ),
+                          );
                           Navigator.push(context,
                               MaterialPageRoute(builder: (_) {
                             return My_Login_Screen();

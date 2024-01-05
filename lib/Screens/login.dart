@@ -1,4 +1,6 @@
 import 'package:ca202/Screens/screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_icon_class/font_awesome_icon_class.dart';
 
@@ -10,6 +12,8 @@ class My_Login_Screen extends StatefulWidget {
 }
 
 class _My_Login_ScreenState extends State<My_Login_Screen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,6 +89,7 @@ class _My_Login_ScreenState extends State<My_Login_Screen> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Enter your email",
@@ -110,6 +115,7 @@ class _My_Login_ScreenState extends State<My_Login_Screen> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
+                        controller: _passwordController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Enter your password",
@@ -164,7 +170,29 @@ class _My_Login_ScreenState extends State<My_Login_Screen> {
                         borderRadius: BorderRadius.circular(
                           10.0,
                         ),
-                        onTap: () {},
+                        onTap: () async {
+                          try {
+                            await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: _emailController.text,
+                                    password: _passwordController.text);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Login successfully",
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  e.toString(),
+                                ),
+                              ),
+                            );
+                          }
+                        },
                         child: Container(
                           width: double.infinity,
                           height: 60,

@@ -1,4 +1,5 @@
 import 'package:ca202/Screens/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class My_Signin_Screen extends StatefulWidget {
@@ -9,6 +10,8 @@ class My_Signin_Screen extends StatefulWidget {
 }
 
 class _My_Signin_ScreenState extends State<My_Signin_Screen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,31 +70,32 @@ class _My_Signin_ScreenState extends State<My_Signin_Screen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.only(
-                        left: 20.0,
-                        right: 20.0,
-                        top: 0.0,
-                      ),
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 247, 234, 234),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Enter your name",
-                          hintStyle: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(
+                    //   height: 10.0,
+                    // ),
+                    // Container(
+                    //   width: double.infinity,
+                    //   padding: EdgeInsets.only(
+                    //     left: 20.0,
+                    //     right: 20.0,
+                    //     top: 0.0,
+                    //   ),
+                    //   height: 50,
+                    //   decoration: BoxDecoration(
+                    //     color: Color.fromARGB(255, 247, 234, 234),
+                    //     borderRadius: BorderRadius.circular(10.0),
+                    //   ),
+                    //   child: TextFormField(
+                    //     // controller: _emailController,
+                    //     decoration: InputDecoration(
+                    //       border: InputBorder.none,
+                    //       hintText: "Enter your name",
+                    //       hintStyle: TextStyle(
+                    //         fontSize: 15,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 20.0,
                     ),
@@ -108,6 +112,7 @@ class _My_Signin_ScreenState extends State<My_Signin_Screen> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Enter your email",
@@ -133,6 +138,7 @@ class _My_Signin_ScreenState extends State<My_Signin_Screen> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
+                        controller: _passwordController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Enter your password",
@@ -145,28 +151,28 @@ class _My_Signin_ScreenState extends State<My_Signin_Screen> {
                     const SizedBox(
                       height: 20.0,
                     ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.only(
-                        left: 20.0,
-                        right: 20.0,
-                        top: 0.0,
-                      ),
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 247, 234, 234),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Enter confirm password",
-                          hintStyle: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   width: double.infinity,
+                    //   padding: EdgeInsets.only(
+                    //     left: 20.0,
+                    //     right: 20.0,
+                    //     top: 0.0,
+                    //   ),
+                    //   height: 50,
+                    //   decoration: BoxDecoration(
+                    //     color: Color.fromARGB(255, 247, 234, 234),
+                    //     borderRadius: BorderRadius.circular(10.0),
+                    //   ),
+                    //   child: TextFormField(
+                    //     decoration: InputDecoration(
+                    //       border: InputBorder.none,
+                    //       hintText: "Enter confirm password",
+                    //       hintStyle: TextStyle(
+                    //         fontSize: 15,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 60.0,
                     ),
@@ -178,11 +184,36 @@ class _My_Signin_ScreenState extends State<My_Signin_Screen> {
                         borderRadius: BorderRadius.circular(
                           10.0,
                         ),
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (_) {
-                            return My_Login_Screen();
-                          }));
+                        onTap: () async {
+                          try {
+                            await FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                                    email: _emailController.text,
+                                    password: _passwordController.text);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Registered successfully",
+                                ),
+                              ),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) {
+                                  return My_Login_Screen();
+                                },
+                              ),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  e.toString(),
+                                ),
+                              ),
+                            );
+                          }
                         },
                         child: Container(
                           width: double.infinity,
